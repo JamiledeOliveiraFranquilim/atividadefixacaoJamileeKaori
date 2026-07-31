@@ -12,28 +12,25 @@
   <ul id="lista"></ul>
 
   <script>
-    const SUPABASE_URL = 'https://xxfyrxycbnnrizxoexre.supabase.co'
-    const SUPABASE_ANON_KEY = 'sb_publishable_2P7CdAPFH68FhLosaNi1-A_2O-Hj7_n'
+  const SUPABASE_URL = "https://xxfyrxycbnnrizxoexre.supabase.co";
+  const SUPABASE_KEY = "sb_publishable_2P7CdAPFH68FhLosaNi1-A_2O-Hj7_n";
 
-    const _supabase = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY)
+  const supabase = window.supabase.createClient(
+      SUPABASE_URL,
+      SUPABASE_KEY
+  );
 
-    async function carregarDados() {
-      const { data, error } = await _supabase.from('produtos').select('*')
-      
-      if (error) {
-        console.error('Erro:', error)
-        return
+  async function verificarUsuario() {
+      const { data } = await supabase.auth.getUser();
+
+      if (data.user) {
+          window.location.href = "homepage.html";
+      } else {
+          window.location.href = "login.html";
       }
+  }
 
-      const lista = document.getElementById('lista')
-      data.forEach(item => {
-        const li = document.createElement('li')
-        li.textContent = item.nome
-        lista.appendChild(li)
-      })
-    }
-
-    carregarDados()
+  verificarUsuario();
   </script>
 </body>
 </html>
