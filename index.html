@@ -5,61 +5,98 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="style.css">
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <title>Login</title>
+    <title>Redirecionando...</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: Arial, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin: 0;
+        }
+        
+        .container {
+            background: white;
+            padding: 50px;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            text-align: center;
+            max-width: 400px;
+            width: 90%;
+            animation: fadeIn 0.5s ease;
+        }
+        
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .logo {
+            font-size: 64px;
+            margin-bottom: 10px;
+        }
+        
+        h1 {
+            color: #333;
+            margin-bottom: 10px;
+            font-size: 28px;
+        }
+        
+        .subtitle {
+            color: #666;
+            margin-bottom: 30px;
+            font-size: 14px;
+        }
+        
+        .loader {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #667eea;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 20px auto;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        .message {
+            color: #666;
+            font-size: 14px;
+            margin-top: 15px;
+        }
+    </style>
 </head>
 <body>
 
-    <!-- Seu formulário de login -->
-    <div class="login-container">
-        <h2>Login</h2>
-
-        <input type="email" id="email" placeholder="E-mail">
-        <input type="password" id="senha" placeholder="Senha">
-
-        <button onclick="login()">Entrar</button>
-
-        <p id="mensagem"></p>
+    <div class="container">
+        <h1>Bea Truppel</h1>
+        <p class="subtitle">Sistema de Gerenciamento</p>
+        
+        <div class="loader"></div>
+        <p class="message">Redirecionando para o login...</p>
     </div>
 
-<script>
-const SUPABASE_URL = "https://xxfyrxycbnnrizxoexre.supabase.co";
-const SUPABASE_KEY = "sb_publishable_2P7CdAPFH68FhLosaNi1-A_2O-Hj7_n";
-
-const supabase = window.supabase.createClient(
-    SUPABASE_URL,
-    SUPABASE_KEY
-);
-
-// Se já estiver logado, vai para a Home
-async function verificarUsuario() {
-    const { data } = await supabase.auth.getUser();
-
-    if (data.user) {
-        window.location.href = "homepage.html";
-    }
-}
-
-verificarUsuario();
-
-// Login
-async function login() {
-    const email = document.getElementById("email").value;
-    const senha = document.getElementById("senha").value;
-
-    const { error } = await supabase.auth.signInWithPassword({
-        email,
-        password: senha
-    });
-
-    if (error) {
-        document.getElementById("mensagem").innerText = error.message;
-    } else {
-        window.location.href = "homepage.html";
-    }
-}
-</script>
+    <script>
+        window.location.href = 'login.html';
+    </script>
 
 </body>
 </html>

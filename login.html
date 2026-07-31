@@ -44,12 +44,10 @@
     <script src="supabase.js"></script>
 
     <script>
-        // Verificar se já está logado
         document.addEventListener('DOMContentLoaded', async function() {
             console.log('Página de login carregada');
             
             try {
-                // Verifica se a função verificarSessao existe
                 if (typeof verificarSessao === 'undefined') {
                     console.error('Função verificarSessao não encontrada!');
                     return;
@@ -67,13 +65,11 @@
             }
         });
 
-        // Função para login com Enter
         document.addEventListener('keypress', function(e) {
             if (e.key === 'Enter') {
                 const email = document.getElementById('email');
                 const senha = document.getElementById('senha');
                 
-                // Se o foco está em algum dos campos de login
                 if (document.activeElement === email || document.activeElement === senha) {
                     login();
                 }
