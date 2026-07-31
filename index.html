@@ -4,9 +4,36 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="style.css">
+    <script src="https://jsdelivr.net"></script>
     <title>Homepage</title>
 </head>
 <body>
-    
+    <h1>Meus Dados</h1>
+  <ul id="lista"></ul>
+
+  <script>
+    const SUPABASE_URL = 'SUA_URL_AQUI'
+    const SUPABASE_ANON_KEY = 'SUA_CHAVE_ANON_AQUI'
+
+    const _supabase = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY)
+
+    async function carregarDados() {
+      const { data, error } = await _supabase.from('produtos').select('*')
+      
+      if (error) {
+        console.error('Erro:', error)
+        return
+      }
+
+      const lista = document.getElementById('lista')
+      data.forEach(item => {
+        const li = document.createElement('li')
+        li.textContent = item.nome
+        lista.appendChild(li)
+      })
+    }
+
+    carregarDados()
+  </script>
 </body>
 </html>
