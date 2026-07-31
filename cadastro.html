@@ -9,42 +9,51 @@
     <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
+<div class="container">
+    <div class="logo">
+        <h1>Bea Truppel</h1>
+    </div>
+    <input 
+        id="nome" 
+        type="text" 
+        placeholder="Nome Completo"
+        autocomplete="name"
+    >
+    <input 
+        id="email" 
+        type="email" 
+        placeholder="Email"
+        autocomplete="email"
+    >
+    <input 
+        id="senha" 
+        type="password" 
+        placeholder="Senha (mínimo 6 caracteres)"
+        autocomplete="new-password"
+    >
+    <input 
+        id="dataNascimento" 
+        type="date"
+    >
 
-    <div class="container">
-        <div class="logo">
-
-        </div>
-
-        <h2>Cadastro</h2>
-
-        <input id="nome" type="text" placeholder="Nome Completo" autocomplete="name">
-        <input id="email" type="email" placeholder="Email" autocomplete="email">
-        <input id="senha" type="password" placeholder="Senha (mínimo 6 caracteres)" autocomplete="new-password">
-        <input id="dataNascimento" type="date">
-
-        <div class="button-group">
-            <button onclick="cadastrar()" class="btn-primary">
-                Cadastrar
-            </button>
-            <button onclick="window.location.href='login.html'" class="btn-secondary">
-                Login
-            </button>
-        </div>
-
-        <p id="mensagem"></p>
+    <div class="button-group">
+        <button onclick="cadastrar()" class="btn-primary">
+            Cadastrar
+        </button>
+        <button onclick="window.location.href='login.html'" class="btn-secondary">
+            Login
+        </button>
     </div>
 
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <script src="supabase.js"></script>
+    <p id="mensagem"></p>
+</div>
 
-    <script>
-        // Verificar se já está logado
-        document.addEventListener('DOMContentLoaded', async function() {
-            const session = await verificarSessao();
-            if (session) {
-                window.location.href = 'homepage.html';
-            }
-        });
-    </script>
+<!-- Biblioteca Supabase -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+<!-- Seu arquivo de configuração -->
+<script src="supabase.js"></script>
+
+<!-- Não precisa de mais nada, o supabase.js já tem tudo! -->
 </body>
 </html>
