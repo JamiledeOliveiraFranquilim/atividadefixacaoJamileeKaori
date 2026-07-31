@@ -8,15 +8,25 @@
     <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
-
     <div class="container">
         <div class="logo">
+            <h1>Bea Truppel</h1>
         </div>
 
         <h2>Login</h2>
 
-        <input id="email" type="email" placeholder="Email" autocomplete="email">
-        <input id="senha" type="password" placeholder="Senha" autocomplete="current-password">
+        <input 
+            id="email" 
+            type="email" 
+            placeholder="Email" 
+            autocomplete="email"
+        >
+        <input 
+            id="senha" 
+            type="password" 
+            placeholder="Senha" 
+            autocomplete="current-password"
+        >
 
         <div class="button-group">
             <button onclick="login()" class="btn-primary">
@@ -36,9 +46,37 @@
     <script>
         // Verificar se já está logado
         document.addEventListener('DOMContentLoaded', async function() {
-            const session = await verificarSessao();
-            if (session) {
-                window.location.href = 'homepage.html';
+            console.log('Página de login carregada');
+            
+            try {
+                // Verifica se a função verificarSessao existe
+                if (typeof verificarSessao === 'undefined') {
+                    console.error('Função verificarSessao não encontrada!');
+                    return;
+                }
+                
+                const session = await verificarSessao();
+                console.log('Sessão atual:', session);
+                
+                if (session) {
+                    console.log('Usuário já logado, redirecionando para homepage');
+                    window.location.href = 'homepage.html';
+                }
+            } catch (error) {
+                console.error('Erro ao verificar sessão:', error);
+            }
+        });
+
+        // Função para login com Enter
+        document.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                const email = document.getElementById('email');
+                const senha = document.getElementById('senha');
+                
+                // Se o foco está em algum dos campos de login
+                if (document.activeElement === email || document.activeElement === senha) {
+                    login();
+                }
             }
         });
     </script>
