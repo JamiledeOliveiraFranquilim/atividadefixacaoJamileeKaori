@@ -1,718 +1,310 @@
 <!DOCTYPE html>
-<html lang="pt-BR">
+<html lang="pt-br">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Monitoramento Industrial | Home</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <script src="https://unpkg.com/mqtt/dist/mqtt.min.js"></script>
+<title>Home</title>
 
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-        }
+<script src="https://unpkg.com/mqtt/dist/mqtt.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
-        body {
-            background: #f0f4f8;
-            min-height: 100vh;
-            display: flex;
-            flex-direction: column;
-        }
+<style>
 
-        .navbar {
-            background: linear-gradient(135deg, #0f766e, #0d9488);
-            padding: 16px 40px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-            position: sticky;
-            top: 0;
-            z-index: 100;
-        }
+*{
+    box-sizing:border-box;
+}
 
-        .navbar-brand {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-        }
+body{
+    margin:0;
+    font-family:Arial,sans-serif;
+    background:#0f172a;
+    color:white;
+}
 
-        .navbar-brand .logo {
-            font-size: 28px;
-            font-weight: 700;
-            color: white;
-            letter-spacing: 1px;
-        }
+nav{
+    background:#1e293b;
+    padding:20px 40px;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+}
 
-        .navbar-brand .subtitle {
-            font-size: 12px;
-            color: rgba(255,255,255,0.8);
-            font-weight: 300;
-        }
+nav h2{
+    margin:0;
+    color:#38bdf8;
+}
 
-        .navbar-links {
-            display: flex;
-            align-items: center;
-            gap: 20px;
-        }
+nav a{
+    color:white;
+    text-decoration:none;
+    margin-right:20px;
+}
 
-        .navbar-links a {
-            color: white;
-            text-decoration: none;
-            padding: 8px 16px;
-            border-radius: 6px;
-            transition: background 0.3s;
-            font-weight: 500;
-            font-size: 14px;
-        }
+button{
+    background:#ef4444;
+    color:white;
+    border:none;
+    padding:10px 20px;
+    border-radius:8px;
+    cursor:pointer;
+}
 
-        .navbar-links a:hover {
-            background: rgba(255,255,255,0.15);
-        }
+button:hover{
+    opacity:0.8;
+}
 
-        .navbar-links a.active {
-            background: rgba(255,255,255,0.25);
-        }
+main{
+    width:90%;
+    max-width:900px;
+    margin:auto;
+}
 
-        .btn-logout {
-            background: #ef4444;
-            color: white;
-            border: none;
-            padding: 8px 20px;
-            border-radius: 6px;
-            cursor: pointer;
-            font-weight: 600;
-            font-size: 14px;
-            transition: background 0.3s, transform 0.2s;
-        }
+.card{
+    margin-top:40px;
+    background:#1e293b;
+    padding:40px;
+    border-radius:20px;
+    text-align:center;
+    box-shadow:0 10px 30px rgba(0,0,0,.4);
+}
 
-        .btn-logout:hover {
-            background: #dc2626;
-            transform: scale(1.02);
-        }
+.card h1{
+    color:#38bdf8;
+}
 
-        .user-info {
-            color: rgba(255,255,255,0.9);
-            font-size: 13px;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
+#temperatura{
+    font-size:70px;
+    font-weight:bold;
+    margin:30px;
+    color:#38bdf8;
+}
 
-        .user-info .user-icon {
-            background: rgba(255,255,255,0.2);
-            border-radius: 50%;
-            padding: 6px 10px;
-            font-size: 16px;
-        }
+#seguranca{
+    font-size:28px;
+    font-weight:bold;
+    margin-top:20px;
+}
 
-        main {
-            flex: 1;
-            max-width: 1100px;
-            margin: 30px auto;
-            padding: 0 20px;
-            width: 100%;
-        }
+#status{
+    margin-top:20px;
+    color:#94a3b8;
+}
 
-        .card-monitor {
-            background: white;
-            border-radius: 16px;
-            padding: 40px;
-            box-shadow: 0 8px 30px rgba(0,0,0,0.08);
-            text-align: center;
-            margin-bottom: 30px;
-            border: 1px solid rgba(15, 118, 110, 0.1);
-        }
+.sobre{
+    margin-top:40px;
+    background:#1e293b;
+    padding:30px;
+    border-radius:20px;
+}
 
-        .card-monitor h2 {
-            color: #1e293b;
-            font-size: 22px;
-            font-weight: 600;
-            margin-bottom: 8px;
-        }
+.sobre h2{
+    color:#38bdf8;
+}
 
-        .card-monitor .last-update {
-            color: #94a3b8;
-            font-size: 14px;
-            margin-bottom: 20px;
-        }
+footer{
+    margin-top:50px;
+    padding:20px;
+    text-align:center;
+    background:#1e293b;
+    color:#cbd5e1;
+}
 
-        .temperatura-wrapper {
-            display: flex;
-            justify-content: center;
-            align-items: baseline;
-            gap: 10px;
-            margin: 20px 0;
-        }
+</style>
 
-        #temperatura {
-            font-size: 72px;
-            font-weight: 700;
-            color: #0f766e;
-            transition: color 0.5s;
-        }
-
-        .temperatura-simbolo {
-            font-size: 36px;
-            color: #64748b;
-        }
-
-        .temperatura-label {
-            font-size: 18px;
-            color: #64748b;
-            margin-top: -10px;
-        }
-
-        #status {
-            font-size: 28px;
-            font-weight: 700;
-            padding: 16px 30px;
-            border-radius: 12px;
-            display: inline-block;
-            margin: 10px auto;
-            transition: all 0.5s;
-        }
-
-        .status-normal {
-            background: #dcfce7;
-            color: #166534;
-        }
-
-        .status-atencao {
-            background: #fef3c7;
-            color: #92400e;
-        }
-
-        .status-critico {
-            background: #fee2e2;
-            color: #991b1b;
-        }
-
-        .status-descricao {
-            font-size: 16px;
-            color: #475569;
-            margin-top: 8px;
-        }
-
-        .info-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 20px;
-            margin: 25px 0;
-        }
-
-        .info-item {
-            background: #f8fafc;
-            padding: 16px;
-            border-radius: 10px;
-            border-left: 4px solid #0f766e;
-        }
-
-        .info-item .label {
-            font-size: 12px;
-            text-transform: uppercase;
-            color: #94a3b8;
-            font-weight: 600;
-            letter-spacing: 0.5px;
-        }
-
-        .info-item .value {
-            font-size: 18px;
-            font-weight: 600;
-            color: #1e293b;
-            margin-top: 4px;
-        }
-
-        .historico-section {
-            background: white;
-            border-radius: 16px;
-            padding: 30px;
-            box-shadow: 0 8px 30px rgba(0,0,0,0.08);
-            margin-bottom: 30px;
-            border: 1px solid rgba(15, 118, 110, 0.1);
-        }
-
-        .historico-section h3 {
-            color: #1e293b;
-            font-size: 18px;
-            margin-bottom: 16px;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-        .historico-section h3 .badge {
-            background: #0f766e;
-            color: white;
-            font-size: 12px;
-            padding: 2px 12px;
-            border-radius: 20px;
-        }
-
-        #historico-lista {
-            max-height: 250px;
-            overflow-y: auto;
-        }
-
-        .historico-item {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 10px 16px;
-            border-bottom: 1px solid #f1f5f9;
-            transition: background 0.2s;
-        }
-
-        .historico-item:hover {
-            background: #f8fafc;
-        }
-
-        .historico-item .temp {
-            font-weight: 600;
-            font-size: 16px;
-        }
-
-        .historico-item .temp-normal {
-            color: #166534;
-        }
-        .historico-item .temp-atencao {
-            color: #92400e;
-        }
-        .historico-item .temp-critico {
-            color: #991b1b;
-        }
-
-        .historico-item .data {
-            color: #94a3b8;
-            font-size: 14px;
-        }
-
-        .historico-item .status-badge {
-            font-size: 12px;
-            padding: 2px 12px;
-            border-radius: 20px;
-            font-weight: 500;
-        }
-
-        .badge-normal {
-            background: #dcfce7;
-            color: #166534;
-        }
-        .badge-atencao {
-            background: #fef3c7;
-            color: #92400e;
-        }
-        .badge-critico {
-            background: #fee2e2;
-            color: #991b1b;
-        }
-
-        .sem-dados {
-            text-align: center;
-            color: #94a3b8;
-            padding: 30px;
-            font-style: italic;
-        }
-
-        .sobre-section {
-            background: white;
-            border-radius: 16px;
-            padding: 30px;
-            box-shadow: 0 8px 30px rgba(0,0,0,0.08);
-            border: 1px solid rgba(15, 118, 110, 0.1);
-        }
-
-        .sobre-section h3 {
-            color: #1e293b;
-            font-size: 18px;
-            margin-bottom: 16px;
-        }
-
-        .sobre-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 20px;
-            margin-top: 10px;
-        }
-
-        .sobre-card {
-            background: #f8fafc;
-            padding: 20px;
-            border-radius: 10px;
-        }
-
-        .sobre-card h4 {
-            color: #0f766e;
-            font-size: 16px;
-            margin-bottom: 8px;
-        }
-
-        .sobre-card p {
-            color: #475569;
-            font-size: 14px;
-            line-height: 1.6;
-        }
-
-        .tech-tags {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 8px;
-            margin-top: 10px;
-        }
-
-        .tech-tag {
-            background: #e2e8f0;
-            padding: 4px 14px;
-            border-radius: 20px;
-            font-size: 12px;
-            color: #1e293b;
-            font-weight: 500;
-        }
-
-        footer {
-            background: #0f766e;
-            color: white;
-            text-align: center;
-            padding: 20px;
-            margin-top: 30px;
-            font-size: 14px;
-        }
-
-        footer span {
-            opacity: 0.8;
-        }
-
-        .loading {
-            display: none;
-            text-align: center;
-            padding: 20px;
-            color: #94a3b8;
-        }
-
-        .loading.active {
-            display: block;
-        }
-
-        .spinner {
-            display: inline-block;
-            width: 30px;
-            height: 30px;
-            border: 3px solid #e2e8f0;
-            border-top: 3px solid #0f766e;
-            border-radius: 50%;
-            animation: spin 0.8s linear infinite;
-        }
-
-        @keyframes spin {
-            to { transform: rotate(360deg); }
-        }
-
-    </style>
 </head>
+
 <body>
 
-    <header class="navbar">
-        <div class="navbar-brand">
-            <span class="logo">Monitoramento Industrial</span>
-            <span class="subtitle">IIoT</span>
-        </div>
-        <nav class="navbar-links">
-            <a href="#" class="active">Dashboard</a>
-            <span class="user-info">
-                <span id="userEmail">Carregando...</span>
-            </span>
-            <button class="btn-logout" onclick="logout()">Sair</button>
-        </nav>
-    </header>
+<nav>
 
-    <main>
+<h2>IIoT Monitor</h2>
 
-        <div class="card-monitor">
-            <h2>Temperatura da Fábrica</h2>
-            <p class="last-update">Atualizado em: <span id="ultimaAtualizacao">--</span></p>
+<div>
+<a href="index.html">Home</a>
+<button id="logout">Sair</button>
+</div>
 
-            <div class="temperatura-wrapper">
-                <span id="temperatura">--</span>
-                <span class="temperatura-simbolo">°C</span>
-            </div>
-            <p class="temperatura-label">Temperatura atual</p>
-
-            <div id="status" class="status-normal">Aguardando dados...</div>
-            <p class="status-descricao" id="statusDescricao">Conectando ao sensor...</p>
+</nav>
 
 
-            <div class="info-grid">
-                <div class="info-item">
-                    <div class="label">Última Leitura</div>
-                    <div class="value" id="ultimaLeitura">--</div>
-                </div>
-                <div class="info-item">
-                    <div class="label">Média (últimas 10)</div>
-                    <div class="value" id="mediaTemperatura">-- °C</div>
-                </div>
-                <div class="info-item">
-                    <div class="label">Total de Leituras</div>
-                    <div class="value" id="totalLeituras">--</div>
-                </div>
-                <div class="info-item">
-                    <div class="label">Status do MQTT</div>
-                    <div class="value" id="statusMqtt">Conectando...</div>
-                </div>
-            </div>
-        </div>
+<main>
 
-        <div class="loading" id="loadingHistorico">
-            <div class="spinner"></div>
-            <p>Carregando histórico...</p>
-        </div>
+<section class="card">
 
-        <div class="historico-section">
-            <h3>
-                Histórico de Leituras
-                <span class="badge">últimas 10</span>
-            </h3>
-            <div id="historico-lista">
-                <div class="sem-dados">Nenhuma leitura registrada ainda.</div>
-            </div>
-        </div>
+<h1>Monitoramento Industrial</h1>
 
-        <div class="sobre-section">
-            <h3>Sobre o Sistema</h3>
-            <div class="sobre-grid">
-                <div class="sobre-card">
-                    <h4>Objetivo</h4>
-                    <p>Monitorar a temperatura de ambientes industriais em tempo real, alertando operadores sobre condições de risco para prevenir acidentes e garantir a segurança operacional.</p>
-                </div>
-                <div class="sobre-card">
-                    <h4>Tecnologias</h4>
-                    <div class="tech-tags">
-                        <span class="tech-tag">ESP32</span>
-                        <span class="tech-tag">MQTT</span>
-                        <span class="tech-tag">HTML5</span>
-                        <span class="tech-tag">CSS3</span>
-                        <span class="tech-tag">JavaScript</span>
-                        <span class="tech-tag">Supabase</span>
-                    </div>
-                    <p style="margin-top: 12px; font-size: 13px; color: #64748b;">
-                        O ESP32 envia os dados via MQTT para o broker EMQX, que são consumidos pelo frontend e armazenados no Supabase para análise histórica.
-                    </p>
-                </div>
-                <div class="sobre-card">
-                    <h4>Faixas de Segurança</h4>
-                    <p style="font-size: 13px;">
-                        <span style="color: #166534;">Normal:</span> &lt; 25°C<br>
-                        <span style="color: #92400e;">Atenção:</span> 25°C - 40°C<br>
-                        <span style="color: #991b1b;">Crítico:</span> &gt; 40°C
-                    </p>
-                </div>
-            </div>
-        </div>
+<p>
+Temperatura capturada pelo ESP32
+</p>
 
-    </main>
+<div id="temperatura">
+-- °C
+</div>
 
-    <footer>
-        <p>
-            Monitoramento Industrial • 
-            <span>Geovanna Shimada e Jamile Franquilim</span> • 
-            <span id="anoAtual">2026</span>
-        </p>
-    </footer>
+<div id="seguranca">
+Aguardando dados...
+</div>
 
-    <script>
-        const SUPABASE_URL = "https://xxfyrxycbnnrizxoexre.supabase.co";
-        const SUPABASE_KEY = "sb_publishable_2P7CdAPFH68FhLosaNi1-A_2O-Hj7_n";
+<div id="status">
+Desconectado
+</div>
 
-        const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
-        let ultimaTemperatura = null;
+</section>
 
-        async function verificarLogin() {
-            try {
-                const { data: { user }, error } = await supabase.auth.getUser();
-                
-                if (error || !user) {
-                    window.location.href = "login.html";
-                    return null;
-                }
 
-                document.getElementById("userEmail").textContent = user.email || "Usuário";
-                return user;
-            } catch (err) {
-                console.error("Erro ao verificar login:", err);
-                window.location.href = "login.html";
-                return null;
-            }
-        }
+<section class="sobre">
 
-        async function logout() {
-            try {
-                await supabase.auth.signOut();
-                window.location.href = "login.html";
-            } catch (err) {
-                console.error("Erro ao sair:", err);
-                alert("Erro ao fazer logout. Tente novamente.");
-            }
-        }
+<h2>Sobre o Sistema</h2>
 
-        async function carregarHistorico() {
-            const loading = document.getElementById("loadingHistorico");
-            const lista = document.getElementById("historico-lista");
+<p>
+O IIoT Monitor é um sistema de monitoramento industrial desenvolvido para acompanhar a temperatura de uma fábrica em tempo real.
+</p>
 
-            try {
-                loading.classList.add("active");
+<p>
+O ESP32 realiza a captura da temperatura utilizando sensores e envia os dados através do protocolo MQTT.
+</p>
 
-                const { data, error } = await supabase
-                    .from("leituras")
-                    .select("*")
-                    .order("created_at", { ascending: false })
-                    .limit(10);
+<p>
+Tecnologias utilizadas:
+HTML, CSS, JavaScript, Supabase, MQTT e ESP32.
+</p>
 
-                if (error) {
-                    console.error("Erro ao buscar histórico:", error);
-                    lista.innerHTML = `<div class="sem-dados">Erro ao carregar histórico</div>`;
-                    return;
-                }
+</section>
 
-                if (!data || data.length === 0) {
-                    lista.innerHTML = `<div class="sem-dados">Nenhuma leitura registrada ainda.</div>`;
-                    return;
-                }
+</main>
 
-                const temperaturas = data.map(item => item.temperatura);
-                const total = data.length;
-                const media = (temperaturas.reduce((a, b) => a + b, 0) / total).toFixed(1);
 
-                document.getElementById("totalLeituras").textContent = total;
-                document.getElementById("mediaTemperatura").textContent = media + " °C";
-                
-                if (data[0]) {
-                    const dataObj = new Date(data[0].created_at);
-                    document.getElementById("ultimaLeitura").textContent = 
-                        dataObj.toLocaleDateString() + " " + dataObj.toLocaleTimeString();
-                }
+<footer>
+IIoT Monitor Industrial - Geovanna e Jamile - 2026
+</footer>
 
-                let html = "";
-                data.forEach(item => {
-                    const temp = item.temperatura;
-                    let classeTemp = "temp-normal";
-                    let classeBadge = "badge-normal";
-                    let labelStatus = "Normal";
 
-                    if (temp > 40) {
-                        classeTemp = "temp-critico";
-                        classeBadge = "badge-critico";
-                        labelStatus = "Crítico";
-                    } else if (temp >= 25) {
-                        classeTemp = "temp-atencao";
-                        classeBadge = "badge-atencao";
-                        labelStatus = "Atenção";
-                    }
+<script>
 
-                    const dataObj = new Date(item.created_at);
-                    const dataFormatada = dataObj.toLocaleDateString() + " " + dataObj.toLocaleTimeString();
+const SUPABASE_URL = "https://xxfyrxycbnnrizxoexre.supabase.co";
+const SUPABASE_ANON_KEY = "sb_publishable_2P7CdAPFH68FhLosaNi1-A_2O-Hj7_n";
 
-                    html += `
-                        <div class="historico-item">
-                            <span class="temp ${classeTemp}">${temp} °C</span>
-                            <span class="status-badge ${classeBadge}">${labelStatus}</span>
-                            <span class="data">${dataFormatada}</span>
-                        </div>
-                    `;
-                });
+const supabaseClient = window.supabase.createClient(
+    SUPABASE_URL,
+    SUPABASE_ANON_KEY
+);
 
-                lista.innerHTML = html;
 
-            } catch (err) {
-                console.error("Erro ao carregar histórico:", err);
-                lista.innerHTML = `<div class="sem-dados">Erro ao carregar dados</div>`;
-            } finally {
-                loading.classList.remove("active");
-            }
-        }
+async function verificarUsuario(){
 
-        function iniciarMQTT() {
-            try {
-                const client = mqtt.connect("wss://broker.emqx.io:8084/mqtt");
+    const {data} = await supabaseClient.auth.getUser();
 
-                client.on("connect", () => {
-                    console.log("MQTT conectado");
-                    document.getElementById("statusMqtt").textContent = "Conectado";
-                    client.subscribe("iot/temperaturakaori");
-                });
+    if(!data.user){
+        window.location.href="login.html";
+    }
 
-                client.on("error", (err) => {
-                    console.error("Erro MQTT:", err);
-                    document.getElementById("statusMqtt").textContent = "Erro na conexão";
-                });
+}
 
-                client.on("message", async (topic, message) => {
-                    try {
-                        const temperatura = parseFloat(message.toString());
-                        if (isNaN(temperatura)) return;
+verificarUsuario();
 
-                        ultimaTemperatura = temperatura;
 
-                        document.getElementById("temperatura").textContent = temperatura.toFixed(1);
+document.getElementById("logout").onclick = async()=>{
 
-                        const agora = new Date();
-                        document.getElementById("ultimaAtualizacao").textContent = 
-                            agora.toLocaleDateString() + " " + agora.toLocaleTimeString();
+    await supabaseClient.auth.signOut();
 
-                        const statusEl = document.getElementById("status");
-                        const descricaoEl = document.getElementById("statusDescricao");
+    window.location.href="login.html";
 
-                        statusEl.classList.remove("status-normal", "status-atencao", "status-critico");
+};
 
-                        if (temperatura < 25) {
-                            statusEl.textContent = "NORMAL - Ambiente seguro";
-                            statusEl.className = "status-normal";
-                            descricaoEl.textContent = "A temperatura está dentro dos parâmetros ideais de operação.";
-                        } else if (temperatura <= 40) {
-                            statusEl.textContent = "ATENÇÃO - Temperatura elevada";
-                            statusEl.className = "status-atencao";
-                            descricaoEl.textContent = "A temperatura está acima do normal. Recomenda-se monitoramento contínuo.";
-                        } else {
-                            statusEl.textContent = "CRÍTICO - Risco operacional";
-                            statusEl.className = "status-critico";
-                            descricaoEl.textContent = "⚠️ Ação imediata necessária! Temperatura acima do limite seguro.";
-                        }
 
-                        const { error } = await supabase
-                            .from("leituras")
-                            .insert({ temperatura: temperatura });
+const temperaturaEl = document.getElementById("temperatura");
+const segurancaEl = document.getElementById("seguranca");
+const statusEl = document.getElementById("status");
 
-                        if (error) {
-                            console.error("Erro ao salvar no Supabase:", error);
-                        } else {
-                            await carregarHistorico();
-                        }
 
-                    } catch (err) {
-                        console.error("Erro ao processar mensagem MQTT:", err);
-                    }
-                });
+const client = mqtt.connect(
+    "wss://broker.emqx.io:8084/mqtt"
+);
 
-            } catch (err) {
-                console.error("Erro ao iniciar MQTT:", err);
-                document.getElementById("statusMqtt").textContent = "Falha na conexão";
-            }
-        }
-        async function init() {
-            const user = await verificarLogin();
-            if (!user) return;
 
-            document.getElementById("anoAtual").textContent = new Date().getFullYear();
+client.on("connect",()=>{
 
-            await carregarHistorico();
+    statusEl.innerHTML="🟢 Conectado ao Broker MQTT";
 
-            iniciarMQTT();
-        }
+    client.subscribe(
+        "iot/temperatura"
+    );
 
-        document.addEventListener("DOMContentLoaded", init);
-    </script>
+});
+
+
+client.on("message",async(topic,message)=>{
+
+    const temperatura = Number(message.toString());
+
+
+    if(isNaN(temperatura)){
+        return;
+    }
+
+
+    temperaturaEl.innerHTML =
+    temperatura + " °C";
+
+
+    if(temperatura < 25){
+
+        segurancaEl.innerHTML =
+        "🟢 NORMAL - Ambiente seguro";
+
+        segurancaEl.style.color="lime";
+
+    }
+
+    else if(temperatura <= 40){
+
+        segurancaEl.innerHTML =
+        "🟡 ATENÇÃO - Temperatura elevada";
+
+        segurancaEl.style.color="yellow";
+
+    }
+
+    else{
+
+        segurancaEl.innerHTML =
+        "🔴 CRÍTICO - Risco operacional";
+
+        segurancaEl.style.color="red";
+
+    }
+
+
+    const {error} = await supabaseClient
+    .from("leituras")
+    .insert({
+        temperatura: temperatura
+    });
+
+
+    if(error){
+
+        console.log(
+            "Erro ao salvar:",
+            error
+        );
+
+    }
+
+});
+
+
+client.on("error",(erro)=>{
+
+    statusEl.innerHTML="🔴 Erro MQTT";
+
+    console.log(erro);
+
+});
+
+</script>
+
 
 </body>
 </html>
