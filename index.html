@@ -4,36 +4,60 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="style.css">
-    <script src="https://jsdelivr.net"></script>
-    <title>Supabase</title>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <title>Login</title>
 </head>
 <body>
-    <h1>Meus Dados</h1>
-  <ul id="lista"></ul>
 
-  <script>
-    const SUPABASE_URL = 'https://xxfyrxycbnnrizxoexre.supabase.co'
-    const SUPABASE_ANON_KEY = 'sb_publishable_2P7CdAPFH68FhLosaNi1-A_2O-Hj7_n'
+    <!-- Seu formulário de login -->
+    <div class="login-container">
+        <h2>Login</h2>
 
-    const _supabase = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY)
+        <input type="email" id="email" placeholder="E-mail">
+        <input type="password" id="senha" placeholder="Senha">
 
-    async function carregarDados() {
-      const { data, error } = await _supabase.from('produtos').select('*')
-      
-      if (error) {
-        console.error('Erro:', error)
-        return
-      }
+        <button onclick="login()">Entrar</button>
 
-      const lista = document.getElementById('lista')
-      data.forEach(item => {
-        const li = document.createElement('li')
-        li.textContent = item.nome
-        lista.appendChild(li)
-      })
+        <p id="mensagem"></p>
+    </div>
+
+<script>
+const SUPABASE_URL = "https://xxfyrxycbnnrizxoexre.supabase.co";
+const SUPABASE_KEY = "SUA_CHAVE";
+
+const supabase = window.supabase.createClient(
+    SUPABASE_URL,
+    SUPABASE_KEY
+);
+
+// Se já estiver logado, vai para a Home
+async function verificarUsuario() {
+    const { data } = await supabase.auth.getUser();
+
+    if (data.user) {
+        window.location.href = "homepage.html";
     }
+}
 
-    carregarDados()
-  </script>
+verificarUsuario();
+
+// Login
+async function login() {
+    const email = document.getElementById("email").value;
+    const senha = document.getElementById("senha").value;
+
+    const { error } = await supabase.auth.signInWithPassword({
+        email,
+        password: senha
+    });
+
+    if (error) {
+        document.getElementById("mensagem").innerText = error.message;
+    } else {
+        window.location.href = "homepage.html";
+    }
+}
+</script>
+
 </body>
 </html>

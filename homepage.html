@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Monitoramento Industrial</title>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="https://unpkg.com/mqtt/dist/mqtt.min.js"></script>
+
+    <style>
+        *{
+            margin:0;
+            padding:0;
+            box-sizing:border-box;
+            font-family:Arial, Helvetica, sans-serif;
+        }
+
+        body{
+            background:#f5f5f5;
+        }
+
+        header{
+            background:#0f766e;
+            color:white;
+            padding:20px;
+            display:flex;
+            justify-content:space-between;
+            align-items:center;
+        }
+
+        nav button{
+            padding:10px 18px;
+            border:none;
+            background:#ef4444;
+            color:white;
+            cursor:pointer;
+            border-radius:5px;
+        }
+
+        main{
+            width:90%;
+            max-width:900px;
+            margin:40px auto;
+        }
+
+        .card{
+            background:white;
+            padding:30px;
+            border-radius:10px;
+            text-align:center;
+            box-shadow:0 0 10px rgba(0,0,0,.1);
+        }
+
+        #temperatura{
+            font-size:60px;
+            margin:20px;
+            font-weight:bold;
+        }
+
+        #status{
+            font-size:25px;
+            font-weight:bold;
+        }
+
+        .sobre{
+            margin-top:40px;
+            background:white;
+            padding:20px;
+            border-radius:10px;
+            box-shadow:0 0 10px rgba(0,0,0,.1);
+        }
+
+        footer{
+            text-align:center;
+            margin-top:50px;
+            padding:20px;
+            background:#0f766e;
+            color:white;
+        }
+
+    </style>
+
+</head>
+<body>
+
+<header>
+
+    <h2>Monitoramento Industrial</h2>
+
+    <nav>
+        <button onclick="logout()">Sair</button>
+    </nav>
+
+</header>
+
+<main>
+
+<div class="card">
+
+<h2>Temperatura Atual</h2>
+
+<div id="temperatura">
+-- °C
+</div>
+
+<div id="status">
+Aguardando dados...
+</div>
+
+</div>
+
+<div class="sobre">
+
+<h2>Sobre</h2>
+
+<p>
+Sistema para monitoramento de temperatura industrial em tempo real utilizando um ESP32.
+As leituras são enviadas via MQTT e armazenadas no Supabase para acompanhamento.
+</p>
+
+<br>
+
+<h3>Objetivo</h3>
+
+<p>
+Monitorar a temperatura de ambientes industriais e alertar operadores quando ocorrerem condições de risco.
+</p>
+
+<br>
+
+<h3>Tecnologias utilizadas</h3>
+
+<ul>
+<li>ESP32</li>
+<li>MQTT</li>
+<li>HTML</li>
+<li>CSS</li>
+<li>JavaScript</li>
+<li>Supabase</li>
+</ul>
+
+</div>
+</div>
+
+</main>
+
+<footer>
+
+Monitoramento Industrial • Geovanna Shimada e Jamile Franquilim• 2026
+
+</footer>
+
+<script>
+
+const SUPABASE_URL="https://xxfyrxycbnnrizxoexre.supabase.co";
+const SUPABASE_KEY="sb_publishable_2P7CdAPFH68FhLosaNi1-A_2O-Hj7_n";
+
+const supabase = window.supabase.createClient(
+SUPABASE_URL,
+SUPABASE_KEY
+);
+
+async function verificarLogin(){
+
+    const {data}=await supabase.auth.getUser();
+
+    if(!data.user){
+
+        window.location.href="login.html";
+
+    }
+
+}
+
+async function logout(){
+
+    await supabase.auth.signOut();
+
+    window.location.href="login.html";
+
+}
+
+verificarLogin();
+
+const client = mqtt.connect("wss://broker.emqx.io:8084/mqtt");
+
+client.on("connect",()=>{
+
+    console.log("MQTT conectado");
+
+    client.subscribe("iot/temperaturakaori");
+
+});
+
+client.on("message",async(topic,message)=>{
+
+    const temperatura=parseFloat(message.toString());
+
+    document.getElementById("temperatura").innerHTML=
+    temperatura+" °C";
+
+    const status=document.getElementById("status");
+
+    if(temperatura<25){
+
+        status.innerHTML="🟢 NORMAL - Ambiente seguro";
+        status.style.color="green";
+
+    }
+    else if(temperatura<=40){
+
+        status.innerHTML="🟡 ATENÇÃO - Temperatura elevada";
+        status.style.color="orange";
+
+    }
+    else{
+
+        status.innerHTML="🔴 CRÍTICO - Risco operacional";
+        status.style.color="red";
+
+    }
+
+    // Salvar no Supabase
+    const {error}=await supabase
+    .from("leituras")
+    .insert({
+        temperatura:temperatura
+    });
+
+    if(error){
+
+        console.log(error);
+
+    }
+
+});
+
+</script>
+
+</body>
+</html>
