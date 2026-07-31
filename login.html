@@ -1,11 +1,40 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>Login</title>
 </head>
+
 <body>
-    
+
+<h1>Login</h1>
+
+<input id="email" type="email" placeholder="Email">
+
+<br><br>
+
+<input id="senha" type="password" placeholder="Senha">
+
+<br><br>
+
+
+<button onclick="login()">
+    Entrar
+</button>
+
+
+<button onclick="window.location.href='cadastro.html'">
+    Cadastrar
+</button>
+
+
+<p id="mensagem"></p>
+
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+<script src="supabase.js"></script>
+
 </body>
 </html>
