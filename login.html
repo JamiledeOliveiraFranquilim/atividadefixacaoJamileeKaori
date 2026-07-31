@@ -3,38 +3,45 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login</title>
+    <title>Login - Bea Truppel</title>
+    <link rel="stylesheet" href="css/style.css">
 </head>
-
 <body>
 
-<h1>Login</h1>
+    <div class="container">
+        <div class="logo">
+            <h1>Bea Truppel</h1>
+            <span class="subtitle">Social Media</span>
+        </div>
 
-<input id="email" type="email" placeholder="Email">
+        <h2>Login</h2>
 
-<br><br>
+        <input id="email" type="email" placeholder="Email" autocomplete="email">
+        <input id="senha" type="password" placeholder="Senha" autocomplete="current-password">
 
-<input id="senha" type="password" placeholder="Senha">
+        <div class="button-group">
+            <button onclick="login()" class="btn-primary">
+                Entrar
+            </button>
+            <button onclick="window.location.href='cadastro.html'" class="btn-secondary">
+                Cadastrar
+            </button>
+        </div>
 
-<br><br>
+        <p id="mensagem"></p>
+    </div>
 
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="supabase.js"></script>
 
-<button onclick="login()">
-    Entrar
-</button>
-
-
-<button onclick="window.location.href='cadastro.html'">
-    Cadastrar
-</button>
-
-
-<p id="mensagem"></p>
-
-
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-
-<script src="supabase.js"></script>
-
+    <script>
+        // Verificar se já está logado
+        document.addEventListener('DOMContentLoaded', async function() {
+            const session = await verificarSessao();
+            if (session) {
+                window.location.href = 'homepage.html';
+            }
+        });
+    </script>
 </body>
 </html>
