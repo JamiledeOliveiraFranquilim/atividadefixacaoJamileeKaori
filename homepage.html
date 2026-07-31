@@ -429,26 +429,26 @@ const supabaseClient = window.supabase.createClient(
 );
 
 
-// async function verificarUsuario(){
+async function verificarUsuario(){
 
-//     const {data} = await supabaseClient.auth.getUser();
+    const {data} = await supabaseClient.auth.getUser();
 
-//     if(!data.user){
-//         window.location.href="login.html";
-//     }
+    if(!data.user){
+        window.location.href="login.html";
+    }
 
-// }
+}
 
-// verificarUsuario();
+verificarUsuario();
 
 
-// document.getElementById("logout").onclick = async()=>{
+document.getElementById("logout").onclick = async()=>{
 
-//     await supabaseClient.auth.signOut();
+    await supabaseClient.auth.signOut();
 
-//     window.location.href="login.html";
+    window.location.href="login.html";
 
-// };
+};
 
 
 const temperaturaEl = document.getElementById("temperatura");
